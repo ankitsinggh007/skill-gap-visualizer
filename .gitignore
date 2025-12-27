@@ -1,0 +1,63 @@
+# ============================
+# 🔒 Backend Engine (HIDE)
+# ============================
+api/
+lib/
+server/
+functions/
+tests/
+# ============================
+# 🔒 Environment & Keys
+# ============================
+.env
+.env.*
+.vercel
+*.key
+*.pem
+
+# ============================
+# 📦 Build Output (Frontend)
+# ============================
+dist/
+build/
+out/
+
+# ============================
+# 🧪 Logs & Temp
+# ============================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+.tmp/
+.cache/
+
+# ============================
+# 🧩 Node Modules
+# ============================
+node_modules/
+
+# ============================
+# ⚙️ Editor & OS Junk
+# ============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ============================
+# 🔧 Vercel & Deployment
+# ============================
+.vercel/
+.vercelignore
+
+# ============================
+# ⚙️ Test Runner Sandbox
+# ============================
+src/__debug__/
+test-output/
+sandbox/
+playground/
+.tmp/
+.cache/
