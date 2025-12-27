@@ -1,0 +1,16 @@
+{
+  "rawSummary": "Mock summary: Enthusiastic frontend learner with basic project experience.",
+  "extractedSkills": [
+    { "skill": "JavaScript" },
+    { "skill": "React" },
+    { "skill": "HTML" }
+  ],
+  "inferredSkills": [
+    { "skill": "REST APIs", "reason": "Mentioned integrations" },
+    { "skill": "Git", "reason": "Mentioned version control" }
+  ],
+  "experienceYears": 1,
+  "educationLevel": "B.Tech",
+  "tools": ["VSCode", "GitHub"],
+  "projects": ["Portfolio Website", "Todo App"]
+}
