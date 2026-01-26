@@ -8,8 +8,6 @@ export function useResumeParser() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Core function (logic added in next tickets)
-
   const cleanText = (str) => {
     if (!str) return "";
 
@@ -17,6 +15,16 @@ export function useResumeParser() {
       .replace(/\s+/g, " ") // collapse multiple spaces/newlines/tabs
       .replace(/[^\x20-\x7E]+/g, "") // remove non-ASCII junk characters
       .trim();
+  };
+
+  const validateParsedText = (fullText, source) => {
+    if (!fullText || fullText.length < 20) {
+      setError(
+        `No readable text found in your ${source}. It may be a scanned or image-only resume. Please upload a text-based resume.`
+      );
+      return null;
+    }
+    return fullText;
   };
 
   const parseFile = useCallback(async (file) => {
@@ -34,11 +42,12 @@ export function useResumeParser() {
       const allowedTypes = [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
       ];
 
       if (!allowedTypes.includes(file.type)) {
         setError(
-          "Unsupported file type. Only PDF and DOCX are allowed.please upload a valid file."
+          "Unsupported file type. Only PDF, DOCX, and TXT are allowed. Please upload a valid file."
         );
         return;
       }
@@ -49,16 +58,42 @@ export function useResumeParser() {
         setError("File is too large. Maximum allowed size is 8MB.");
         return;
       }
-      // ✔ 4. Convert to ArrayBuffer
+
+      // Handle TXT files (no ArrayBuffer needed)
+      if (file.type === "text/plain") {
+        try {
+          let fullText = await file.text();
+
+          // Normalize whitespace
+          fullText = fullText.replace(/\s+/g, " ").trim();
+
+          // Clean text
+          fullText = cleanText(fullText);
+
+          // Validate
+          const result = validateParsedText(fullText, "file");
+          if (result) {
+            setText(result);
+            return result;
+          }
+          return;
+        } catch (err) {
+          console.error(err);
+          setError("Failed to parse TXT file. File may be corrupted.");
+          return;
+        }
+      }
+
+      // ✔ 4. Convert to ArrayBuffer for PDF/DOCX
       let buffer;
       try {
         buffer = await file.arrayBuffer();
-      } catch (err) {
-        setError("Failed to read file data. Please upload a valid file.", err.message);
+      } catch {
+        setError("Failed to read file data. Please upload a valid file.");
         return;
       }
 
-      // Placeholder for PDF or DOCX parsing (next tickets)
+      // ✔ 5. Parse PDF
       if (file.type === "application/pdf") {
         try {
           pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -78,31 +113,28 @@ export function useResumeParser() {
             fullText += " " + pageText;
           }
 
-          // normalize whitespace
+          // Normalize whitespace
           fullText = fullText.replace(/\s+/g, " ").trim();
 
-          fullText = cleanText(fullText);
+          // Clean text
           fullText = cleanText(fullText);
 
-          if (!fullText || fullText.length < 20) {
-            setError(
-              "No readable text found in your file. It may be a scanned or image-only resume. Please upload a text-based PDF or DOCX."
-            );
-            return;
+          // Validate
+          const result = validateParsedText(fullText, "PDF");
+          if (result) {
+            setText(result);
+            return result;
           }
-
-          setText(fullText);
-
-          setText(fullText);
-          return fullText;
+          return;
         } catch (err) {
           console.error(err);
           setError("Failed to parse PDF. File may be corrupted.");
           return;
         }
       }
-      // 6. If DOCX → parse using mammoth
-      else if (
+
+      // ✔ 6. Parse DOCX
+      if (
         file.type ===
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ) {
@@ -111,23 +143,19 @@ export function useResumeParser() {
 
           let fullText = result.value || "";
 
-          // normalize whitespace
+          // Normalize whitespace
           fullText = fullText.replace(/\s+/g, " ").trim();
 
-          fullText = cleanText(fullText);
+          // Clean text
           fullText = cleanText(fullText);
 
-          if (!fullText || fullText.length < 20) {
-            setError(
-              "No readable text found in your file. It may be a scanned or image-only resume. Please upload a text-based PDF or DOCX."
-            );
-            return;
+          // Validate
+          const validated = validateParsedText(fullText, "DOCX");
+          if (validated) {
+            setText(validated);
+            return validated;
           }
-
-          setText(fullText);
-
-          setText(fullText);
-          return fullText;
+          return;
         } catch (err) {
           console.error(err);
           setError("Failed to parse DOCX. File may be corrupted.");
@@ -135,7 +163,7 @@ export function useResumeParser() {
         }
       }
     } catch (err) {
-      setError("Unexpected error parsing file.", err.message);
+      setError("Unexpected error parsing file. Please try again.");
       console.error(err);
     } finally {
       setIsLoading(false);
