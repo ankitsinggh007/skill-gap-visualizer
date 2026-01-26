@@ -17,9 +17,11 @@ export function AnalyzeProvider({ children }) {
   const [extractionStatus, setExtractionStatus] = useState("idle"); // idle | loading | success | empty | error
 
   // NEW: role:level:companyType for benchmark
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [selectedLevel, setSelectedLevel] = useState(null);
-  const [selectedCompanyType, setSelectedCompanyType] = useState(null);
+  const [selectedRole, setSelectedRole] = useState("react");
+  const [selectedLevel, setSelectedLevel] = useState("junior");
+  const [selectedCompanyType, setSelectedCompanyType] = useState("unicorn");
+
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   // NEW: editable skill lists
   const [extractedSkills, setExtractedSkills] = useState([]);
@@ -30,6 +32,19 @@ export function AnalyzeProvider({ children }) {
     setIsLoading(true);
     setExtractionStatus("loading");
     setExtractionError(null);
+    setAnalysisResult(null);
+    setExtractedSkills([]);
+    setInferredSkills([]);
+    setDeletedSkills([]);
+
+    if ((resumeText || "").length > 100000) {
+      setExtractionStatus("error");
+      setExtractionError(
+        "Resume text is too long. Please upload a smaller file."
+      );
+      setIsLoading(false);
+      return;
+    }
 
     // store the raw resume text
     setResumeText(resumeText);
@@ -87,36 +102,82 @@ export function AnalyzeProvider({ children }) {
   // -----------------------
   // SKILL EDITING LOGIC
   // -----------------------
+  function normalizeSkillName(value) {
+    return typeof value === "string" ? value.trim().toLowerCase() : "";
+  }
+
   function removeSkill(skillName) {
+    const normalized = normalizeSkillName(skillName);
     // remove from extracted
-    setExtractedSkills((prev) => prev.filter((s) => s.skill !== skillName));
+    setExtractedSkills((prev) =>
+      prev.filter((s) => normalizeSkillName(s.skill) !== normalized)
+    );
 
     // remove from inferred
-    setInferredSkills((prev) => prev.filter((s) => s.skill !== skillName));
+    setInferredSkills((prev) =>
+      prev.filter((s) => normalizeSkillName(s.skill) !== normalized)
+    );
 
     // add to deleted
-    setDeletedSkills((prev) => [...prev, skillName]);
+    setDeletedSkills((prev) => {
+      if (prev.some((s) => normalizeSkillName(s) === normalized)) {
+        return prev;
+      }
+      return [...prev, skillName];
+    });
   }
 
   function undoSkill(skillName) {
+    const normalized = normalizeSkillName(skillName);
     // remove from deleted
-    setDeletedSkills((prev) => prev.filter((s) => s !== skillName));
+    setDeletedSkills((prev) =>
+      prev.filter((s) => normalizeSkillName(s) !== normalized)
+    );
 
     // add back (as extracted, safe default)
-    setExtractedSkills((prev) => [...prev, { skill: skillName }]);
+    const alreadyExists =
+      extractedSkills.some((s) => normalizeSkillName(s.skill) === normalized) ||
+      inferredSkills.some((s) => normalizeSkillName(s.skill) === normalized);
+    if (!alreadyExists) {
+      setExtractedSkills((prev) => [...prev, { skill: skillName }]);
+    }
   }
 
   function addSkill(skillName) {
+    const normalized = normalizeSkillName(skillName);
+    if (normalized.length < 2) return;
     // prevent duplicates
     if (
-      extractedSkills.some((s) => s.skill === skillName) ||
-      inferredSkills.some((s) => s.skill === skillName)
+      extractedSkills.some((s) => normalizeSkillName(s.skill) === normalized) ||
+      inferredSkills.some((s) => normalizeSkillName(s.skill) === normalized)
     ) {
       return;
     }
 
+    setDeletedSkills((prev) =>
+      prev.filter((s) => normalizeSkillName(s) !== normalized)
+    );
     // add as extracted (safe default)
-    setExtractedSkills((prev) => [...prev, { skill: skillName }]);
+    setExtractedSkills((prev) => [...prev, { skill: normalized }]);
+  }
+
+  function clearAnalysisResult() {
+    setAnalysisResult(null);
+  }
+
+  function resetSession() {
+    setResumeText("");
+    setExtractionResult(null);
+    setExtractionError(null);
+    setExtractionStatus("idle");
+    setExtractedSkills([]);
+    setInferredSkills([]);
+    setDeletedSkills([]);
+    setAnalysisResult(null);
+    setSelectedRole("react");
+    setSelectedLevel("junior");
+    setSelectedCompanyType("unicorn");
+    setCurrentStep(1);
   }
 
   return (
@@ -138,6 +199,10 @@ export function AnalyzeProvider({ children }) {
         setSelectedLevel,
         selectedCompanyType,
         setSelectedCompanyType,
+        analysisResult,
+        setAnalysisResult,
+        clearAnalysisResult,
+        resetSession,
         // skill editing
         extractedSkills,
         inferredSkills,
