@@ -1,34 +1,33 @@
 import { mapApiError } from "@/api/apiError";
 
-export async function extractSkillsFromResume(resumeText) {
+export async function analyzeResume(payload) {
   try {
-    const res = await fetch("/api/extract", {
+    const res = await fetch("/api/analyze-resume", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ resumeText }),
+      body: JSON.stringify(payload),
     });
 
-    // Check if response is successful
     if (!res.ok) {
       try {
         const errorData = await res.json();
         return mapApiError(
           res,
           errorData,
-          "Failed to extract skills. Please try again."
+          "Failed to analyze resume. Please try again."
         );
       } catch {
         return mapApiError(
           res,
           null,
-          "Failed to extract skills. Please try again."
+          "Failed to analyze resume. Please try again."
         );
       }
     }
 
     return await res.json();
   } catch (error) {
-    console.error("Frontend → extract API failed:", error);
+    console.error("Frontend → analyze API failed:", error);
     return mapApiError(
       null,
       null,
