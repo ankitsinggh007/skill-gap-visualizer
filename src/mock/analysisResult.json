@@ -1,0 +1,159 @@
+{
+  "metadata": {
+    "role": "react",
+    "level": "junior",
+    "companyType": "unicorn",
+    "experienceYears": 2
+  },
+  "matches": {
+    "totalSkills": 12,
+    "matched": [
+      {
+        "skill": "JavaScript",
+        "category": "languages",
+        "matchType": "exact",
+        "weight": 1
+      },
+      {
+        "skill": "React",
+        "category": "frontend",
+        "matchType": "exact",
+        "weight": 1.2
+      },
+      {
+        "skill": "HTML",
+        "category": "frontend",
+        "matchType": "exact",
+        "weight": 0.8
+      },
+      {
+        "skill": "CSS",
+        "category": "frontend",
+        "matchType": "alias",
+        "weight": 0.7
+      },
+      {
+        "skill": "REST APIs",
+        "category": "backend",
+        "matchType": "partial",
+        "weight": 0.9
+      }
+    ],
+    "missing": [
+      { "skill": "TypeScript", "category": "languages", "weight": 1.1 },
+      { "skill": "Testing", "category": "quality", "weight": 1 },
+      { "skill": "Accessibility", "category": "frontend", "weight": 0.9 }
+    ],
+    "extra": [
+      { "skill": "Figma" },
+      { "skill": "Photoshop" }
+    ],
+    "coverageByCategory": [
+      {
+        "category": "frontend",
+        "matched": 3,
+        "total": 5,
+        "percentage": 60
+      },
+      {
+        "category": "languages",
+        "matched": 1,
+        "total": 2,
+        "percentage": 50
+      },
+      {
+        "category": "backend",
+        "matched": 1,
+        "total": 2,
+        "percentage": 50
+      },
+      {
+        "category": "quality",
+        "matched": 0,
+        "total": 1,
+        "percentage": 0
+      }
+    ],
+    "weakSignals": [
+      {
+        "skill": "REST APIs",
+        "category": "backend",
+        "weight": 0.4
+      }
+    ]
+  },
+  "analysis": {
+    "finalScore": 68,
+    "categoryScores": [
+      {
+        "category": "frontend",
+        "score": 30,
+        "max": 50,
+        "percentage": 60
+      },
+      {
+        "category": "languages",
+        "score": 10,
+        "max": 20,
+        "percentage": 50
+      },
+      {
+        "category": "backend",
+        "score": 12,
+        "max": 20,
+        "percentage": 60
+      },
+      {
+        "category": "quality",
+        "score": 4,
+        "max": 10,
+        "percentage": 40
+      }
+    ],
+    "insights": [
+      {
+        "category": "languages",
+        "message": "TypeScript is commonly required for this role.",
+        "severity": "high",
+        "tip": "Add a small TypeScript project or migration example."
+      },
+      {
+        "category": "quality",
+        "message": "Testing signals are weak.",
+        "severity": "medium",
+        "tip": "Mention Jest, RTL, or end-to-end tests you wrote."
+      }
+    ],
+    "strengthWeakness": {
+      "strengths": [
+        "Solid React fundamentals",
+        "Good frontend coverage"
+      ],
+      "weaknesses": [
+        "Limited testing evidence",
+        "Missing TypeScript"
+      ]
+    },
+    "atsReadiness": {
+      "score": 18,
+      "total": 30,
+      "percentage": 60,
+      "matchedKeywords": ["React", "JavaScript", "REST APIs"],
+      "missingKeywords": ["TypeScript", "Jest", "Accessibility"]
+    },
+    "recommendations": [
+      {
+        "title": "Add TypeScript proof",
+        "reason": "TypeScript appears in many job descriptions.",
+        "action": "Include a bullet about using TypeScript in a project.",
+        "priority": "P0"
+      },
+      {
+        "title": "Show testing depth",
+        "reason": "Testing signals improve seniority and reliability.",
+        "action": "Mention Jest/RTL and a concrete testing outcome.",
+        "priority": "P1"
+      }
+    ]
+  }
+}
