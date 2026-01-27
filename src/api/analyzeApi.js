@@ -1,6 +1,13 @@
 import { mapApiError } from "@/api/apiError";
+import { analyzeResumeMock } from "@/api/mockAnalyzeApi";
+
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== "false";
 
 export async function analyzeResume(payload) {
+  if (USE_MOCK_API) {
+    return analyzeResumeMock(payload);
+  }
+
   try {
     const res = await fetch("/api/analyze-resume", {
       method: "POST",
