@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useAnalyze } from "@/context/AnalyzeContext";
+import { buildAnalysisVM } from "@/features/analysis/viewModel";
 
 export default function AnalysisPage() {
   const { analysisResult, resetSession } = useAnalyze();
   const navigate = useNavigate();
+  const viewModel = buildAnalysisVM(analysisResult);
 
-  if (!analysisResult) {
+  if (!viewModel.hasAnalysis) {
     return (
       <div className="mx-auto max-w-3xl py-8">
         <div className="space-y-4 rounded-lg border p-6 shadow-sm">
