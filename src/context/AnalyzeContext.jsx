@@ -29,6 +29,7 @@ export function AnalyzeProvider({ children }) {
     setIsLoading(true);
     setExtractionStatus("loading");
     setExtractionError(null);
+    setExtractionResult(null);
     setAnalysisResult(null);
     setExtractedSkills([]);
     setInferredSkills([]);
@@ -139,6 +140,10 @@ export function AnalyzeProvider({ children }) {
 
   function addSkill(skillName) {
     const normalized = normalizeSkillName(skillName);
+    const trimmed =
+      typeof skillName === "string"
+        ? skillName.trim()
+        : String(skillName || "");
     if (normalized.length < 2) return;
     // prevent duplicates
     if (
@@ -152,7 +157,7 @@ export function AnalyzeProvider({ children }) {
       prev.filter((s) => normalizeSkillName(s) !== normalized)
     );
     // add as extracted (safe default)
-    setExtractedSkills((prev) => [...prev, { skill: normalized }]);
+    setExtractedSkills((prev) => [...prev, { skill: trimmed }]);
   }
 
   function clearAnalysisResult() {
@@ -164,6 +169,7 @@ export function AnalyzeProvider({ children }) {
     setExtractionResult(null);
     setExtractionError(null);
     setExtractionStatus("idle");
+    setIsLoading(false);
     setExtractedSkills([]);
     setInferredSkills([]);
     setDeletedSkills([]);
