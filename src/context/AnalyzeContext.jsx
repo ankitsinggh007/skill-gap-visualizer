@@ -1,12 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { extractSkillsMock } from "@/api/mockApi";
 import { extractSkillsFromResume } from "@/api/extractApi";
-import PropTypes from "prop-types";
 
 const AnalyzeContext = createContext(null);
 
 // Toggle between mock and real API via environment variable
-const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== "false";
 
 export function AnalyzeProvider({ children }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -50,10 +47,7 @@ export function AnalyzeProvider({ children }) {
     setResumeText(resumeText);
 
     try {
-      // Use mock API or real API based on toggle
-      const result = USE_MOCK_API
-        ? await extractSkillsMock(resumeText)
-        : await extractSkillsFromResume(resumeText);
+      const result = await extractSkillsFromResume(resumeText);
 
       // Check if the result is an error response from the API client
       if (result.success === false) {
@@ -220,7 +214,3 @@ export function AnalyzeProvider({ children }) {
 export function useAnalyze() {
   return useContext(AnalyzeContext);
 }
-
-AnalyzeProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
