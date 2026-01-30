@@ -57,6 +57,7 @@ export function buildAnalysisVM(analysisResult) {
       strengths: [],
       weaknesses: [],
       recommendationsByPriority: { P0: [], P1: [], P2: [] },
+      insights: [],
       atsReadiness: {
         score: 0,
         total: 0,
@@ -102,6 +103,7 @@ export function buildAnalysisVM(analysisResult) {
     strengths,
     weaknesses,
     recommendationsByPriority: buildRecommendationsByPriority(recommendations),
+    insights: toSafeArray(analysisResult?.analysis?.insights),
     atsReadiness: {
       score: toSafeNumber(atsReadinessRaw?.score, 0),
       total: toSafeNumber(atsReadinessRaw?.total, 0),
