@@ -40,11 +40,34 @@ export default function AnalysisPage() {
 
   return (
     <div className="mx-auto max-w-4xl py-8">
-      <div className="mb-8 space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">Your Analysis</h1>
-        <p className="text-gray-600">
-          Deep dive into your resume skills and recommendations.
-        </p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-gray-900">Your Analysis</h1>
+          <p className="text-gray-600">
+            Deep dive into your resume skills and recommendations.
+          </p>
+        </div>
+
+        <div className="flex gap-2 sm:pt-1">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded border border-gray-300 bg-white px-4 py-2 text-gray-800 hover:bg-gray-50"
+          >
+            Export
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              resetSession();
+              navigate("/wizard", { replace: true });
+            }}
+            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -82,19 +105,6 @@ export default function AnalysisPage() {
         <PersonalizedPlan
           recommendationsByPriority={viewModel.recommendationsByPriority}
         />
-
-        <div className="flex gap-4 pt-4">
-          <button
-            type="button"
-            onClick={() => {
-              resetSession();
-              navigate("/wizard");
-            }}
-            className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-          >
-            Run New Analysis
-          </button>
-        </div>
       </div>
     </div>
   );
