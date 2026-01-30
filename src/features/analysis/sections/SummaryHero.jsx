@@ -1,5 +1,16 @@
 import SectionCard from "./SectionCard";
 
+function toTitleCase(value) {
+  if (typeof value !== "string") return "";
+  return value
+    .trim()
+    .split(/\s+/)
+    .map((word) =>
+      word ? `${word[0].toUpperCase()}${word.slice(1).toLowerCase()}` : ""
+    )
+    .join(" ");
+}
+
 export default function SummaryHero({ score, levelLabel, metadata }) {
   const levelColors = {
     Strong: "text-green-700 bg-green-50",
@@ -31,7 +42,7 @@ export default function SummaryHero({ score, levelLabel, metadata }) {
                 Role
               </p>
               <p className="mt-1 text-sm font-semibold text-gray-900">
-                {metadata.role}
+                {toTitleCase(metadata.role)}
               </p>
             </div>
           )}
@@ -41,7 +52,7 @@ export default function SummaryHero({ score, levelLabel, metadata }) {
                 Level
               </p>
               <p className="mt-1 text-sm font-semibold text-gray-900">
-                {metadata.level}
+                {toTitleCase(metadata.level)}
               </p>
             </div>
           )}
@@ -51,7 +62,7 @@ export default function SummaryHero({ score, levelLabel, metadata }) {
                 Company Type
               </p>
               <p className="mt-1 text-sm font-semibold text-gray-900">
-                {metadata.companyType}
+                {toTitleCase(metadata.companyType)}
               </p>
             </div>
           )}

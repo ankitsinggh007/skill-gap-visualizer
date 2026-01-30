@@ -54,9 +54,9 @@ export default function PersonalizedPlan({ recommendationsByPriority }) {
               Critical (P0)
             </h3>
             <ul className="space-y-3">
-              {p0.map((item, idx) => (
+              {p0.map((item) => (
                 <li
-                  key={idx}
+                  key={`P0-${item.title}-${item.action || item.reason || ""}`}
                   className="space-y-2 border-l-4 border-red-500 bg-red-50 p-4"
                 >
                   <div className="flex items-center justify-between">
@@ -83,9 +83,9 @@ export default function PersonalizedPlan({ recommendationsByPriority }) {
               Important (P1)
             </h3>
             <ul className="space-y-3">
-              {p1.map((item, idx) => (
+              {p1.map((item) => (
                 <li
-                  key={idx}
+                  key={`P1-${item.title}-${item.action || item.reason || ""}`}
                   className="space-y-2 border-l-4 border-yellow-500 bg-yellow-50 p-4"
                 >
                   <div className="flex items-center justify-between">
@@ -112,9 +112,9 @@ export default function PersonalizedPlan({ recommendationsByPriority }) {
               Nice to Have (P2)
             </h3>
             <ul className="space-y-3">
-              {p2.map((item, idx) => (
+              {p2.map((item) => (
                 <li
-                  key={idx}
+                  key={`P2-${item.title}-${item.action || item.reason || ""}`}
                   className="space-y-2 border-l-4 border-blue-500 bg-blue-50 p-4"
                 >
                   <div className="flex items-center justify-between">

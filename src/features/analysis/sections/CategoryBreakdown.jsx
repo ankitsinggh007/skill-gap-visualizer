@@ -13,7 +13,10 @@ export default function CategoryBreakdown({ categoryScores }) {
     <SectionCard title="Category Breakdown">
       <div className="space-y-4">
         {categoryScores.map((item) => {
-          const percentage = item.percentage || 0;
+          const percentageRaw = Number(item?.percentage);
+          const percentage = Number.isFinite(percentageRaw)
+            ? Math.max(0, Math.min(100, percentageRaw))
+            : 0;
           return (
             <div key={item.category}>
               <div className="mb-1 flex items-center justify-between">
