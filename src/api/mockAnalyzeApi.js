@@ -1,12 +1,27 @@
 import mockAnalysisResult from "@/mock/analysisResult.json";
 
-export async function analyzeResumeMock(_payload) {
-  const { resumeText, extractedSkills, inferredSkills } = _payload;
-  console.log(extractedSkills, inferredSkills);
-  if (resumeText.length < 20) {
+export async function analyzeResumeMock(payload) {
+  const extracted = Array.isArray(payload?.extractedSkills)
+    ? payload.extractedSkills
+    : [];
+  const inferred = Array.isArray(payload?.inferredSkills)
+    ? payload.inferredSkills
+    : [];
+
+  if (extracted.length + inferred.length < 1) {
     return {
       success: false,
-      message: "Resume text too short for analysis (mock).",
+      message: "At least 1 skill required.",
+      status: 400,
+    };
+  }
+
+  const resumeText = payload?.resumeText;
+
+  if (typeof resumeText !== "string" || resumeText.trim().length === 0) {
+    return {
+      success: false,
+      message: "resumeText is required and must be a string.",
       status: 400,
     };
   }
