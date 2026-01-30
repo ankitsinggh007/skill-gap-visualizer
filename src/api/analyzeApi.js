@@ -1,7 +1,9 @@
 import { mapApiError } from "@/api/apiError";
 import { analyzeResumeMock } from "@/api/mockAnalyzeApi";
 
-const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== "false";
+const flag = import.meta.env.VITE_USE_MOCK_API;
+const USE_MOCK_API =
+  typeof flag === "string" ? flag === "true" : import.meta.env.DEV;
 
 export async function analyzeResume(payload) {
   if (USE_MOCK_API) {
