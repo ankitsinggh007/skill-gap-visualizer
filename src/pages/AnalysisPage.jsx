@@ -17,7 +17,7 @@ export default function AnalysisPage() {
 
   if (!viewModel.hasAnalysis) {
     return (
-      <div className="mx-auto max-w-3xl py-8">
+      <div className="mx-auto max-w-3xl">
         <div className="space-y-4 rounded-lg border p-6 shadow-sm">
           <h2 className="text-xl font-semibold">No analysis yet</h2>
           <p className="text-gray-600">
@@ -39,7 +39,7 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl py-8">
+    <div className="mx-auto max-w-4xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-gray-900">Your Analysis</h1>
