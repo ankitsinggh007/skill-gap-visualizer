@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { useAnalyze } from "@/context/AnalyzeContext";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Badge from "@/components/ui/Badge";
+import Alert from "@/components/ui/Alert";
 
 export default function Step2ExtractedSkills() {
   const {
@@ -39,165 +44,182 @@ export default function Step2ExtractedSkills() {
   const canContinue = totalSkills >= 1;
 
   return (
-    <div className="space-y-6 rounded-lg border p-6 shadow-sm">
-      <h2 className="text-xl font-semibold">Review Your Skills</h2>
-
+    <div className="space-y-6">
+      {/* Status Alerts */}
       {isIdle && (
-        <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
+        <Alert variant="info">
           <div className="font-medium">No extraction yet</div>
-          <div>Upload a resume to extract skills, or add them manually.</div>
-        </div>
+          <div className="mt-1 text-sm">
+            Upload a resume to extract skills, or add them manually.
+          </div>
+        </Alert>
       )}
 
       {isError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <Alert variant="error">
           <div className="font-medium">Extraction error</div>
-          <div>{extractionError || "Something went wrong earlier."}</div>
-        </div>
+          <div className="mt-1 text-sm">
+            {extractionError || "Something went wrong earlier."}
+          </div>
+        </Alert>
       )}
 
       {isEmpty && (
-        <div className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">
+        <Alert variant="warning">
           <div className="font-medium">Add skills manually</div>
-          <div>No skills were detected, so start by adding your own.</div>
-        </div>
+          <div className="mt-1 text-sm">
+            No skills were detected, so start by adding your own.
+          </div>
+        </Alert>
       )}
 
       {/* EXTRACTED SKILLS */}
-      <div>
-        <p className="mb-2 text-gray-600">Extracted Skills:</p>
-        {extractedSkills.length === 0 ? (
-          <div className="text-sm text-gray-500">None yet.</div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {extractedSkills.map((s) => {
-              const skill = s?.skill;
-              const normalized = skill ? normalizeSkillName(skill) : "";
-              if (!normalized) return null;
-              return (
-                <span
-                  key={normalized}
-                  title="extracted from resume"
-                  className="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
-                >
-                  {skill}
-                  <button
-                    onClick={() => removeSkill(skill)}
-                    className="ml-1 text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              );
-            })}
+      {extractedSkills.length > 0 && (
+        <Card>
+          <div className="space-y-3">
+            <h3 className="font-semibold text-gray-900">Extracted Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {extractedSkills.map((s) => {
+                const skill = s?.skill;
+                const normalized = skill ? normalizeSkillName(skill) : "";
+                if (!normalized) return null;
+                return (
+                  <Badge key={normalized} variant="primary">
+                    <div className="flex items-center gap-2">
+                      <span>{skill}</span>
+                      <button
+                        onClick={() => removeSkill(skill)}
+                        className="ml-1 text-lg opacity-70 hover:opacity-100"
+                        title="Remove skill"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </div>
+        </Card>
+      )}
 
       {/* INFERRED SKILLS */}
-      <div>
-        <p className="mb-2 text-gray-600">Inferred Skills:</p>
-        {inferredSkills.length === 0 ? (
-          <div className="text-sm text-gray-500">None yet.</div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {inferredSkills.map((s) => {
-              const skill = s?.skill;
-              const normalized = skill ? normalizeSkillName(skill) : "";
-              if (!normalized) return null;
-              return (
-                <span
-                  key={normalized}
-                  title={s?.source || ""}
-                  className="flex items-center gap-1 rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-800"
-                >
-                  {skill}
-                  <button
-                    onClick={() => removeSkill(skill)}
-                    className="ml-1 text-red-600"
-                  >
-                    ×
-                  </button>
-                </span>
-              );
-            })}
+      {inferredSkills.length > 0 && (
+        <Card>
+          <div className="space-y-3">
+            <h3 className="font-semibold text-gray-900">Inferred Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {inferredSkills.map((s) => {
+                const skill = s?.skill;
+                const normalized = skill ? normalizeSkillName(skill) : "";
+                if (!normalized) return null;
+                return (
+                  <Badge key={normalized} variant="success">
+                    <div className="flex items-center gap-2">
+                      <span>{skill}</span>
+                      <button
+                        onClick={() => removeSkill(skill)}
+                        className="ml-1 text-lg opacity-70 hover:opacity-100"
+                        title={s?.source || "Remove skill"}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
-        )}
-      </div>
+        </Card>
+      )}
 
       {/* DELETED SKILLS */}
       {deletedSkills.length > 0 && (
-        <div>
-          <p className="mb-2 text-gray-600">Deleted Skills:</p>
-          <div className="flex flex-wrap gap-2">
-            {deletedSkills.map((skill) => {
-              const normalized = skill ? normalizeSkillName(skill) : "";
-              if (!normalized) return null;
-              return (
-                <span
-                  key={normalized}
-                  className="flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700"
-                >
-                  {skill}
-                  <button
-                    onClick={() => undoSkill(skill)}
-                    className="ml-1 text-green-600"
-                  >
-                    ↺
-                  </button>
-                </span>
-              );
-            })}
+        <Card>
+          <div className="space-y-3">
+            <h3 className="font-semibold text-gray-900">Deleted Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {deletedSkills.map((skill) => {
+                const normalized = skill ? normalizeSkillName(skill) : "";
+                if (!normalized) return null;
+                return (
+                  <Badge key={normalized} variant="default">
+                    <div className="flex items-center gap-2">
+                      <span>{skill}</span>
+                      <button
+                        onClick={() => undoSkill(skill)}
+                        className="ml-1 text-lg opacity-70 hover:opacity-100"
+                        title="Restore skill"
+                      >
+                        ↺
+                      </button>
+                    </div>
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ADD CUSTOM SKILL */}
-      <form onSubmit={handleAddSkill} className="flex gap-2">
-        <input
-          name="skill"
-          type="text"
-          placeholder="Add a skill…"
-          value={newSkill}
-          onChange={(e) => {
-            setNewSkill(e.target.value);
-            if (inputError) setInputError("");
-          }}
-          className="flex-1 rounded border px-3 py-1"
-        />
-        <button
-          type="submit"
-          disabled={!normalizeSkillName(newSkill)}
-          className="rounded bg-blue-600 px-4 py-1 text-white disabled:bg-gray-400"
-        >
-          Add
-        </button>
-      </form>
-      {inputError && <div className="text-sm text-red-600">{inputError}</div>}
-
-      {(isIdle || isError) && (
-        <button
-          type="button"
-          onClick={() => setCurrentStep(1)}
-          className="w-full rounded border border-gray-300 px-4 py-2 text-gray-700"
-        >
-          Back
-        </button>
-      )}
-
-      {/* CONTINUE */}
-      <button
-        type="button"
-        onClick={() => setCurrentStep(3)}
-        disabled={!canContinue}
-        className="w-full rounded bg-blue-600 px-4 py-2 text-white disabled:bg-gray-400"
-      >
-        Continue
-      </button>
-      {!canContinue && (
-        <div className="text-sm text-gray-600">
-          Add at least 1 skill to continue.
+      <Card>
+        <div className="space-y-4">
+          <h3 className="font-semibold text-gray-900">Add Custom Skill</h3>
+          <form onSubmit={handleAddSkill} className="flex gap-2">
+            <Input
+              name="skill"
+              type="text"
+              placeholder="e.g., React, Python, UX Design"
+              value={newSkill}
+              onChange={(e) => {
+                setNewSkill(e.target.value);
+                if (inputError) setInputError("");
+              }}
+              error={!!inputError}
+              className="flex-1"
+            />
+            <Button
+              type="submit"
+              disabled={!normalizeSkillName(newSkill)}
+              size="md"
+            >
+              Add
+            </Button>
+          </form>
+          {inputError && (
+            <div className="text-sm text-red-600">{inputError}</div>
+          )}
         </div>
+      </Card>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3 pt-4">
+        {(isIdle || isError) && (
+          <Button
+            type="button"
+            onClick={() => setCurrentStep(1)}
+            variant="secondary"
+            className="flex-1"
+          >
+            Back
+          </Button>
+        )}
+
+        <Button
+          type="button"
+          onClick={() => setCurrentStep(3)}
+          disabled={!canContinue}
+          className="flex-1"
+        >
+          Continue to Benchmark
+        </Button>
+      </div>
+
+      {!canContinue && (
+        <Alert variant="warning">
+          <div className="text-sm">Add at least 1 skill to continue.</div>
+        </Alert>
       )}
     </div>
   );

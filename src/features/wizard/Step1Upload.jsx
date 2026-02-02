@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useResumeParser } from "@/hooks/useResumeParser";
 import { useAnalyze } from "@/context/AnalyzeContext";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Alert from "@/components/ui/Alert";
 
 export default function Step1Upload() {
   const {
@@ -29,14 +32,11 @@ export default function Step1Upload() {
 
     try {
       await runExtraction(text);
-      // runExtraction updates extractionStatus in context automatically
-      // No need for setTimeout or second hook call
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  // Handle step advance based on extraction status
   const handleRetry = async () => {
     setIsSubmitting(true);
     clearExtractionError();
@@ -53,104 +53,135 @@ export default function Step1Upload() {
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Reset extraction state on new upload so old error/success UI doesn't show
       clearExtractionError();
       await parseFile(file);
     }
   };
 
   return (
-    <div className="space-y-4 rounded-lg border p-6 shadow-sm">
-      <h2 className="text-xl font-semibold">Upload Resume</h2>
-      <p className="text-gray-600">Supported formats: PDF, DOCX, TXT</p>
+    <Card className="space-y-6">
+      {/* File Upload Section */}
+      <div className="space-y-3">
+        <p className="mb-2 block text-sm font-medium text-gray-700">
+          Choose Resume File
+        </p>
 
-      <input
-        type="file"
-        accept=".pdf,.docx,.txt"
-        onChange={handleUpload}
-        disabled={isParsing || isExtracting || isSubmitting}
-        className="rounded border p-2 disabled:bg-gray-100"
-      />
+        <input
+          id="file-upload"
+          type="file"
+          accept=".pdf,.docx,.txt"
+          onChange={handleUpload}
+          disabled={isParsing || isExtracting || isSubmitting}
+          className="sr-only"
+        />
+
+        <label
+          htmlFor="file-upload"
+          aria-label="Upload resume file"
+          className="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition-colors hover:border-blue-400 hover:bg-blue-50"
+        >
+          <div className="text-gray-600">
+            <div className="text-sm font-medium">Click to upload</div>
+            <div className="mt-1 text-xs text-gray-500">PDF, DOCX, or TXT</div>
+          </div>
+        </label>
+      </div>
 
       {/* Parse Error */}
       {parseError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <Alert variant="error">
           <div className="font-medium">Parse Error</div>
-          <div>{parseError}</div>
-        </div>
+          <div className="mt-1 text-sm">{parseError}</div>
+        </Alert>
       )}
 
       {/* Extraction Loading State */}
       {isExtracting && (
-        <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+        <Alert variant="info">
           <div className="font-medium">Extracting Skills...</div>
-          <div>Please wait while we analyze your resume.</div>
-        </div>
+          <div className="mt-1 text-sm">
+            Please wait while we analyze your resume.
+          </div>
+        </Alert>
       )}
 
       {/* Extraction Error State */}
       {extractionStatus === "error" && extractionError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <Alert variant="error">
           <div className="font-medium">Extraction Failed</div>
-          <div>{extractionError}</div>
-          <button
+          <div className="mt-1 text-sm">{extractionError}</div>
+          <Button
             onClick={handleRetry}
             disabled={isSubmitting || isExtracting}
-            className="mt-2 rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700 disabled:bg-gray-400"
+            size="sm"
+            variant="danger"
+            className="mt-3"
           >
             Retry
-          </button>
-        </div>
+          </Button>
+        </Alert>
       )}
 
       {/* Extraction Empty State */}
       {extractionStatus === "empty" && (
-        <div className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">
-          <div className="font-medium">No Skills Found</div>
+        <Alert variant="warning">
           <div>
-            Your resume was parsed but no skills were detected. You can add
-            skills manually on the next step, or try uploading a different
-            resume.
+            <div className="font-medium">No Skills Found</div>
+            <div className="mt-1 text-sm">
+              Your resume was parsed but no skills were detected. You can add
+              skills manually on the next step, or try uploading a different
+              resume.
+            </div>
+            <Button
+              onClick={() => setCurrentStep(2)}
+              disabled={isSubmitting}
+              size="sm"
+              variant="secondary"
+              className="mt-3"
+            >
+              Continue to Review
+            </Button>
           </div>
-          <button
-            onClick={() => setCurrentStep(2)}
-            disabled={isSubmitting}
-            className="mt-2 rounded bg-yellow-600 px-4 py-2 text-white hover:bg-yellow-700 disabled:bg-gray-400"
-          >
-            Continue
-          </button>
-        </div>
+        </Alert>
       )}
 
       {/* Extraction Success - Ready to advance */}
       {extractionStatus === "success" && (
-        <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
-          <div className="font-medium">Skills Extracted Successfully</div>
-          <div>Ready to proceed to the next step.</div>
-          <button
-            onClick={() => setCurrentStep(2)}
-            disabled={isSubmitting}
-            className="mt-2 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:bg-gray-400"
-          >
-            Continue to Review
-          </button>
-        </div>
+        <Alert variant="success">
+          <div>
+            <div className="font-medium">Skills Extracted Successfully</div>
+            <div className="mt-1 text-sm">
+              Ready to proceed to the next step.
+            </div>
+            <Button
+              onClick={() => setCurrentStep(2)}
+              disabled={isSubmitting}
+              size="sm"
+              variant="secondary"
+              className="mt-3"
+            >
+              Continue to Review
+            </Button>
+          </div>
+        </Alert>
       )}
 
       {/* Initial Submit Button */}
       {extractionStatus === "idle" && (
-        <button
-          onClick={handleSubmit}
-          disabled={isDisabled}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {isParsing
-            ? "Parsing..."
-            : isSubmitting
-              ? "Processing..."
-              : "Continue"}
-        </button>
+        <div className="pt-4">
+          <Button
+            onClick={handleSubmit}
+            disabled={isDisabled}
+            className="w-full"
+          >
+            {isParsing
+              ? "Parsing..."
+              : isSubmitting
+                ? "Processing..."
+                : "Continue"}
+          </Button>
+        </div>
       )}
-    </div>
+    </Card>
   );
 }
