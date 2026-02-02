@@ -21,5 +21,5 @@ export default function WizardPage() {
     3: <Step3BenchmarkForm />,
   };
 
-  return <div className="mx-auto max-w-3xl py-8">{steps[currentStep]}</div>;
+  return <div className="mx-auto max-w-3xl">{steps[currentStep]}</div>;
 }
