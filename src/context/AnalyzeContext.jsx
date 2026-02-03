@@ -103,60 +103,95 @@ export function AnalyzeProvider({ children }) {
 
   function removeSkill(skillName) {
     const normalized = normalizeSkillName(skillName);
-    // remove from extracted
+
+    // Find where it came from (preserve original casing + inferred source)
+    const inferredEntry = inferredSkills.find(
+      (s) => normalizeSkillName(s?.skill) === normalized
+    );
+    const extractedEntry = extractedSkills.find(
+      (s) => normalizeSkillName(s?.skill) === normalized
+    );
+
+    const origin = inferredEntry ? "inferred" : "extracted";
+    const skill = (
+      inferredEntry?.skill ||
+      extractedEntry?.skill ||
+      skillName ||
+      ""
+    ).trim();
+    const source = inferredEntry?.source || "";
+
+    // Remove from both lists (safe even if it's only in one)
     setExtractedSkills((prev) =>
-      prev.filter((s) => normalizeSkillName(s.skill) !== normalized)
+      prev.filter((s) => normalizeSkillName(s?.skill) !== normalized)
     );
-
-    // remove from inferred
     setInferredSkills((prev) =>
-      prev.filter((s) => normalizeSkillName(s.skill) !== normalized)
+      prev.filter((s) => normalizeSkillName(s?.skill) !== normalized)
     );
 
-    // add to deleted
+    // Add to deleted (no duplicates)
     setDeletedSkills((prev) => {
-      if (prev.some((s) => normalizeSkillName(s) === normalized)) {
+      if (prev.some((d) => normalizeSkillName(d?.skill) === normalized))
         return prev;
-      }
-      return [...prev, skillName];
+      return [...prev, { skill, origin, source }];
     });
   }
 
   function undoSkill(skillName) {
     const normalized = normalizeSkillName(skillName);
-    // remove from deleted
+
+    // You need the entry BEFORE removing it
+    const entry = deletedSkills.find(
+      (d) => normalizeSkillName(d?.skill) === normalized
+    );
+    if (!entry) return;
+
     setDeletedSkills((prev) =>
-      prev.filter((s) => normalizeSkillName(s) !== normalized)
+      prev.filter((d) => normalizeSkillName(d?.skill) !== normalized)
     );
 
-    // add back (as extracted, safe default)
-    const alreadyExists =
-      extractedSkills.some((s) => normalizeSkillName(s.skill) === normalized) ||
-      inferredSkills.some((s) => normalizeSkillName(s.skill) === normalized);
-    if (!alreadyExists) {
-      setExtractedSkills((prev) => [...prev, { skill: skillName }]);
-    }
-  }
+    // Prevent duplicates
+    const exists =
+      extractedSkills.some(
+        (s) => normalizeSkillName(s?.skill) === normalized
+      ) ||
+      inferredSkills.some((s) => normalizeSkillName(s?.skill) === normalized);
 
-  function addSkill(skillName) {
-    const normalized = normalizeSkillName(skillName);
-    const trimmed =
-      typeof skillName === "string"
-        ? skillName.trim()
-        : String(skillName || "");
-    if (normalized.length < 2) return;
-    // prevent duplicates
-    if (
-      extractedSkills.some((s) => normalizeSkillName(s.skill) === normalized) ||
-      inferredSkills.some((s) => normalizeSkillName(s.skill) === normalized)
-    ) {
+    if (exists) return;
+
+    if (entry.origin === "inferred") {
+      setInferredSkills((prev) => [
+        ...prev,
+        { skill: entry.skill, source: entry.source || "" },
+      ]);
       return;
     }
 
+    setExtractedSkills((prev) => [...prev, { skill: entry.skill }]);
+  }
+
+  function addSkill(skillName) {
+    const trimmed =
+      typeof skillName === "string"
+        ? skillName.trim()
+        : String(skillName || "").trim();
+    const normalized = normalizeSkillName(trimmed);
+    if (normalized.length < 2) return;
+
+    const exists =
+      extractedSkills.some(
+        (s) => normalizeSkillName(s?.skill) === normalized
+      ) ||
+      inferredSkills.some((s) => normalizeSkillName(s?.skill) === normalized);
+
+    if (exists) return;
+
+    // If it was deleted earlier, remove from deleted list
     setDeletedSkills((prev) =>
-      prev.filter((s) => normalizeSkillName(s) !== normalized)
+      prev.filter((d) => normalizeSkillName(d?.skill) !== normalized)
     );
-    // add as extracted (safe default)
+
+    // Manual adds are "extracted" (fine for MVP)
     setExtractedSkills((prev) => [...prev, { skill: trimmed }]);
   }
 
