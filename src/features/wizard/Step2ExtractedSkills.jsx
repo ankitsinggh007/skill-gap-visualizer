@@ -24,6 +24,9 @@ export default function Step2ExtractedSkills() {
   function normalizeSkillName(value) {
     return typeof value === "string" ? value.trim().toLowerCase() : "";
   }
+  function skillLabel(value) {
+    return typeof value === "string" ? value.trim() : "";
+  }
 
   function handleAddSkill(e) {
     e.preventDefault();
@@ -32,7 +35,7 @@ export default function Step2ExtractedSkills() {
       setInputError("Skill must be at least 2 characters.");
       return;
     }
-    addSkill(normalized);
+    addSkill(newSkill);
     setNewSkill("");
     setInputError("");
   }
@@ -86,7 +89,7 @@ export default function Step2ExtractedSkills() {
                 return (
                   <Badge key={normalized} variant="primary">
                     <div className="flex items-center gap-2">
-                      <span>{skill}</span>
+                      <span>{skillLabel(skill)}</span>
                       <button
                         onClick={() => removeSkill(skill)}
                         className="ml-1 text-lg opacity-70 hover:opacity-100"
@@ -116,11 +119,16 @@ export default function Step2ExtractedSkills() {
                 return (
                   <Badge key={normalized} variant="success">
                     <div className="flex items-center gap-2">
-                      <span>{skill}</span>
+                      <span
+                        title={s?.source ? `Source: ${s.source}` : undefined}
+                      >
+                        {skillLabel(skill)}
+                      </span>
+
                       <button
                         onClick={() => removeSkill(skill)}
                         className="ml-1 text-lg opacity-70 hover:opacity-100"
-                        title={s?.source || "Remove skill"}
+                        title="Remove skill"
                       >
                         ×
                       </button>
@@ -139,13 +147,19 @@ export default function Step2ExtractedSkills() {
           <div className="space-y-3">
             <h3 className="font-semibold text-gray-900">Deleted Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {deletedSkills.map((skill) => {
+              {deletedSkills.map((d) => {
+                const skill = d?.skill;
                 const normalized = skill ? normalizeSkillName(skill) : "";
                 if (!normalized) return null;
                 return (
                   <Badge key={normalized} variant="default">
                     <div className="flex items-center gap-2">
-                      <span>{skill}</span>
+                      <span
+                        title={d?.source ? `Source: ${d.source}` : undefined}
+                      >
+                        {skillLabel(skill)}
+                      </span>
+
                       <button
                         onClick={() => undoSkill(skill)}
                         className="ml-1 text-lg opacity-70 hover:opacity-100"
@@ -181,7 +195,7 @@ export default function Step2ExtractedSkills() {
             />
             <Button
               type="submit"
-              disabled={!normalizeSkillName(newSkill)}
+              disabled={normalizeSkillName(newSkill).length < 2}
               size="md"
             >
               Add
