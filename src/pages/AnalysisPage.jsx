@@ -39,16 +39,18 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="mx-auto max-w-4xl print:mx-0 print:max-w-none">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:mb-4">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">Your Analysis</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 print:text-black">
+            Your Analysis
+          </h1>
+          <p className="text-gray-600 print:text-black">
             Deep dive into your resume skills and recommendations.
           </p>
         </div>
 
-        <div className="flex gap-2 sm:pt-1">
+        <div className="flex gap-2 sm:pt-1 print:hidden">
           <button
             type="button"
             onClick={() => window.print()}
@@ -70,7 +72,7 @@ export default function AnalysisPage() {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 print:space-y-4">
         <SummaryHero
           score={viewModel.score}
           levelLabel={viewModel.levelLabel}
