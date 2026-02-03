@@ -1,7 +1,28 @@
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
-import mammoth from "mammoth";
-
 import { useState, useCallback } from "react";
+
+let _pdfjsPromise = null;
+async function loadPdfjs() {
+  if (!_pdfjsPromise) {
+    _pdfjsPromise = import("pdfjs-dist/build/pdf").then((m) => m);
+  }
+  return _pdfjsPromise;
+}
+let _mammothPromise = null;
+async function loadMammoth() {
+  if (!_mammothPromise) {
+    _mammothPromise = import("mammoth").then((m) => m.default ?? m);
+  }
+  return _mammothPromise;
+}
+
+function ensurePdfWorker(pdfjsLib) {
+  if (!pdfjsLib?.GlobalWorkerOptions?.workerSrc) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/build/pdf.worker.mjs",
+      import.meta.url
+    ).toString();
+  }
+}
 
 export function useResumeParser() {
   const [text, setText] = useState("");
@@ -62,16 +83,8 @@ export function useResumeParser() {
       // Handle TXT files (no ArrayBuffer needed)
       if (file.type === "text/plain") {
         try {
-          let fullText = await file.text();
-
-          // Normalize whitespace
-          fullText = fullText.replace(/\s+/g, " ").trim();
-
-          // Clean text
-          fullText = cleanText(fullText);
-
-          // Validate
-          const result = validateParsedText(fullText, "file");
+          let fullText = cleanText(await file.text());
+          const result = validateParsedText(fullText, "TXT");
           if (result) {
             setText(result);
             return result;
@@ -96,30 +109,20 @@ export function useResumeParser() {
       // ✔ 5. Parse PDF
       if (file.type === "application/pdf") {
         try {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-            "pdfjs-dist/build/pdf.worker.mjs",
-            import.meta.url
-          ).toString();
+          const pdfjsLib = await loadPdfjs();
+          ensurePdfWorker(pdfjsLib);
 
           const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-          let fullText = "";
+          const parts = [];
 
           for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
 
-            const pageText = content.items.map((item) => item.str).join(" ");
-
-            fullText += " " + pageText;
+            parts.push(content.items.map((item) => item.str).join(" "));
           }
 
-          // Normalize whitespace
-          fullText = fullText.replace(/\s+/g, " ").trim();
-
-          // Clean text
-          fullText = cleanText(fullText);
-
-          // Validate
+          let fullText = cleanText(parts.join(" "));
           const result = validateParsedText(fullText, "PDF");
           if (result) {
             setText(result);
@@ -139,18 +142,13 @@ export function useResumeParser() {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ) {
         try {
+          const mammoth = await loadMammoth();
+
           const result = await mammoth.extractRawText({ arrayBuffer: buffer });
 
-          let fullText = result.value || "";
-
-          // Normalize whitespace
-          fullText = fullText.replace(/\s+/g, " ").trim();
-
-          // Clean text
-          fullText = cleanText(fullText);
-
-          // Validate
+          let fullText = cleanText(result.value || "");
           const validated = validateParsedText(fullText, "DOCX");
+
           if (validated) {
             setText(validated);
             return validated;
