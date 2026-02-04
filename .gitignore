@@ -10,7 +10,7 @@
 .vercel
 *.key
 *.pem
-
+!.env.example
 # ============================
 # 📦 Build Output (Frontend)
 # ============================
