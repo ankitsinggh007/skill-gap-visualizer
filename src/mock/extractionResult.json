@@ -1,0 +1,11 @@
+{
+  "extractedSkills": [
+    { "skill": "JavaScript" },
+    { "skill": "React" },
+    { "skill": "HTML" }
+  ],
+  "inferredSkills": [
+    { "skill": "REST APIs", "source": "Mentioned integrations" },
+    { "skill": "Git", "source": "Mentioned version control" }
+  ]
+}

@@ -1,11 +1,7 @@
 # ============================
 # 🔒 Backend Engine (HIDE)
 # ============================
-api/
-lib/
-server/
-functions/
-tests/
+/backend/
 # ============================
 # 🔒 Environment & Keys
 # ============================
@@ -14,7 +10,7 @@ tests/
 .vercel
 *.key
 *.pem
-
+!.env.example
 # ============================
 # 📦 Build Output (Frontend)
 # ============================
@@ -61,3 +57,4 @@ sandbox/
 playground/
 .tmp/
 .cache/
+review.patch
