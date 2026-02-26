@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky",
-    "test:extract": "node tests/runExtractionTest.js"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -19,7 +18,6 @@
   },
   "dependencies": {
     "mammoth": "^1.11.0",
-    "openai": "^6.9.1",
     "pdfjs-dist": "^5.4.296",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",
