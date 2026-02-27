@@ -1,7 +1,3 @@
-/**
- * Alert Component
- * Centralized alert with variants (info, success, warning, error)
- */
 export default function Alert({
   children,
   variant = "info",
