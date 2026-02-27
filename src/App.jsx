@@ -1,10 +1,12 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import AppShell from "./components/AppShell";
-import { lazy, Suspense } from "react";
+import ErrorBoundary from "./components/ErrorBoundary";
 import PageLoader from "./components/ui/PageLoader";
+import PageNotFound from "./pages/PageNotFound";
 import WizardPage from "./pages/WizardPage";
 const AnalysisPage = lazy(() => import("./pages/AnalysisPage"));
-import ErrorBoundary from "./components/ErrorBoundary";
+
 function App() {
   return (
     <AppShell>
@@ -21,6 +23,7 @@ function App() {
             </ErrorBoundary>
           }
         />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AppShell>
   );
