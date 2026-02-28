@@ -7,22 +7,32 @@ import Card from "@/components/ui/Card";
 import Select from "@/components/ui/Select";
 import Alert from "@/components/ui/Alert";
 
+const isDev = import.meta.env.DEV;
+
 const ROLE_OPTIONS = [
   { value: "react", label: "React" },
-  { value: "frontend", label: "Frontend" },
-  { value: "backend", label: "Backend" },
+  ...(isDev
+    ? [
+        { value: "frontend", label: "Frontend (dev)" },
+        { value: "backend", label: "Backend (dev)" },
+      ]
+    : []),
 ];
 
 const LEVEL_OPTIONS = [
   { value: "junior", label: "Junior" },
-  { value: "mid", label: "Mid" },
   { value: "senior", label: "Senior" },
+  ...(isDev ? [{ value: "mid", label: "Mid (dev)" }] : []),
 ];
 
 const COMPANY_OPTIONS = [
   { value: "unicorn", label: "Unicorn" },
-  { value: "enterprise", label: "Enterprise" },
-  { value: "startup", label: "Startup" },
+  ...(isDev
+    ? [
+        { value: "enterprise", label: "Enterprise (dev)" },
+        { value: "startup", label: "Startup (dev)" },
+      ]
+    : []),
 ];
 
 export default function Step3BenchmarkForm() {
@@ -145,7 +155,8 @@ export default function Step3BenchmarkForm() {
               placeholder="Select your target role"
             />
             <p className="text-xs text-gray-500">
-              Choose the role you want to be benchmarked against.
+              Current backend support: React for Unicorn (Junior/Senior).
+              {isDev && " Dev-only options are labeled."}
             </p>
           </div>
 
