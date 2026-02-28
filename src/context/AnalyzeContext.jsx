@@ -35,10 +35,10 @@ export function AnalyzeProvider({ children }) {
     setInferredSkills([]);
     setDeletedSkills([]);
 
-    if ((resumeText || "").length > 100000) {
+    if ((resumeText || "").length > 30000) {
       setExtractionStatus("error");
       setExtractionError(
-        "Resume text is too long. Please upload a smaller file."
+        "Resume text is too long (max 30,000 characters). Please upload a smaller file."
       );
       setIsLoading(false);
       return;
