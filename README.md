@@ -23,6 +23,7 @@ npm run dev
 Create a `.env` file (or use `.env.example`):
 ```
 VITE_USE_MOCK_API=true
+VITE_API_BASE=
 ```
 
 ## Scripts
@@ -37,3 +38,4 @@ npm run lint
 - When `VITE_USE_MOCK_API=false`, the app expects backend endpoints at:
   - `POST /api/extract`
   - `POST /api/analyze-resume`
+- For backend request/response contracts, see `FRONTEND-INTEGRATION.md`.

@@ -1,6 +1,6 @@
 import { mapApiError } from "@/api/apiError";
 import { analyzeResumeMock } from "@/api/mockAnalyzeApi";
-
+import apiUrl from "./apiClient";
 const flag = import.meta.env.VITE_USE_MOCK_API;
 const USE_MOCK_API =
   typeof flag === "string" ? flag === "true" : import.meta.env.DEV;
@@ -58,7 +58,7 @@ export async function analyzeResume(payload) {
   }
 
   try {
-    const res = await fetch("/api/analyze-resume", {
+    const res = await fetch(apiUrl("/api/analyze-resume"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(normalizedPayload),

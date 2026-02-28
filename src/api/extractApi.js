@@ -1,6 +1,6 @@
 import { mapApiError } from "@/api/apiError";
 import { extractSkillsMock } from "./mockApi";
-
+import apiUrl from "./apiClient";
 const flag = import.meta.env.VITE_USE_MOCK_API;
 const USE_MOCK_API =
   typeof flag === "string" ? flag === "true" : import.meta.env.DEV;
@@ -11,7 +11,7 @@ export async function extractSkillsFromResume(resumeText) {
   }
 
   try {
-    const res = await fetch("/api/extract", {
+    const res = await fetch(apiUrl("/api/extract"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ resumeText }),
