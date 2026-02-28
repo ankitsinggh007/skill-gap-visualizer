@@ -37,6 +37,35 @@ function buildRecommendationsByPriority(recommendations) {
   return grouped;
 }
 
+function normalizeRecommendations(recommendations) {
+  return recommendations.map((item) =>
+    typeof item === "string" ? { title: item, priority: "P2" } : item
+  );
+}
+
+function normalizeInsights(insights) {
+  return insights.map((item) => {
+    if (!item || typeof item !== "object") return item;
+    const percentage = toSafeNumber(item.percentage, null);
+    const severity =
+      item.severity ??
+      (percentage === null
+        ? "medium"
+        : percentage < 0.4
+          ? "high"
+          : percentage < 0.7
+            ? "medium"
+            : "low");
+
+    return {
+      ...item,
+      severity,
+      message: item.message ?? `${item.category || "Area"} needs improvement`,
+      tip: item.tip ?? "",
+    };
+  });
+}
+
 export function buildAnalysisVM(analysisResult) {
   const hasAnalysis = Number.isFinite(
     Number(analysisResult?.analysis?.finalScore)
@@ -49,15 +78,19 @@ export function buildAnalysisVM(analysisResult) {
       levelLabel: "Weak",
       roleLabel: "",
       categoryScores: [],
+      categoryScoresRaw: [],
       coverageByCategory: [],
       matched: [],
       missing: [],
       weakSignals: [],
       extra: [],
+      matchesRaw: {},
       strengths: [],
       weaknesses: [],
       recommendationsByPriority: { P0: [], P1: [], P2: [] },
+      recommendationsRaw: [],
       insights: [],
+      insightsRaw: [],
       atsReadiness: {
         score: 0,
         total: 0,
@@ -65,20 +98,25 @@ export function buildAnalysisVM(analysisResult) {
         matchedKeywords: [],
         missingKeywords: [],
       },
+      atsReadinessRaw: {},
       metadata: {
         role: "",
         level: "",
         companyType: "",
         experienceYears: 0,
       },
+      metadataRaw: {},
+      analysisRaw: {},
+      raw: analysisResult,
     };
   }
 
   const score = toSafeNumber(analysisResult?.analysis?.finalScore, 0);
   const role = analysisResult?.metadata?.role ?? "";
-  const recommendations = toSafeArray(
+  const rawRecommendations = toSafeArray(
     analysisResult?.analysis?.recommendations
   );
+  const recommendations = normalizeRecommendations(rawRecommendations);
   const strengths = toSafeArray(
     analysisResult?.analysis?.strengthWeakness?.strengths
   );
@@ -86,24 +124,39 @@ export function buildAnalysisVM(analysisResult) {
     analysisResult?.analysis?.strengthWeakness?.weaknesses
   );
   const atsReadinessRaw = analysisResult?.analysis?.atsReadiness;
+  const rawCategoryScores = toSafeArray(
+    analysisResult?.analysis?.categoryScores
+  );
+  const normalizedCategoryScores = rawCategoryScores.map((item) => ({
+    ...item,
+    max: item?.max ?? item?.possible,
+  }));
+  const rawInsights = toSafeArray(analysisResult?.analysis?.insights);
+  const normalizedInsights = normalizeInsights(rawInsights);
+  const matches = analysisResult?.matches || {};
+  const matched = toSafeArray(matches.matched || matches.matchedSkills);
+  const missing = toSafeArray(matches.missing || matches.missingSkills);
+  const analysisRaw = analysisResult?.analysis || {};
 
   return {
     hasAnalysis: true,
     score,
     levelLabel: getLevelLabel(score),
     roleLabel: toTitleCase(role),
-    categoryScores: toSafeArray(analysisResult?.analysis?.categoryScores),
-    coverageByCategory: toSafeArray(
-      analysisResult?.matches?.coverageByCategory
-    ),
-    matched: toSafeArray(analysisResult?.matches?.matched),
-    missing: toSafeArray(analysisResult?.matches?.missing),
-    weakSignals: toSafeArray(analysisResult?.matches?.weakSignals),
-    extra: toSafeArray(analysisResult?.matches?.extra),
+    categoryScores: normalizedCategoryScores,
+    categoryScoresRaw: rawCategoryScores,
+    coverageByCategory: toSafeArray(matches.coverageByCategory),
+    matched,
+    missing,
+    weakSignals: toSafeArray(matches.weakSignals),
+    extra: toSafeArray(matches.extra),
+    matchesRaw: matches,
     strengths,
     weaknesses,
     recommendationsByPriority: buildRecommendationsByPriority(recommendations),
-    insights: toSafeArray(analysisResult?.analysis?.insights),
+    recommendationsRaw: rawRecommendations,
+    insights: normalizedInsights,
+    insightsRaw: rawInsights,
     atsReadiness: {
       score: toSafeNumber(atsReadinessRaw?.score, 0),
       total: toSafeNumber(atsReadinessRaw?.total, 0),
@@ -111,6 +164,7 @@ export function buildAnalysisVM(analysisResult) {
       matchedKeywords: toSafeArray(atsReadinessRaw?.matchedKeywords),
       missingKeywords: toSafeArray(atsReadinessRaw?.missingKeywords),
     },
+    atsReadinessRaw,
     metadata: {
       role,
       level: analysisResult?.metadata?.level ?? "",
@@ -120,5 +174,8 @@ export function buildAnalysisVM(analysisResult) {
         0
       ),
     },
+    metadataRaw: analysisResult?.metadata || {},
+    analysisRaw,
+    raw: analysisResult,
   };
 }
