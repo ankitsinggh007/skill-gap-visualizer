@@ -24,6 +24,7 @@ Create a `.env` file (or use `.env.example`):
 ```
 VITE_USE_MOCK_API=true
 VITE_API_BASE=
+VITE_TURNSTILE_SITE_KEY=
 ```
 
 ## Scripts

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useResumeParser } from "@/hooks/useResumeParser";
 import { useAnalyze } from "@/context/AnalyzeContext";
 import Button from "@/components/ui/Button";
@@ -22,37 +22,94 @@ export default function Step1Upload() {
   } = useAnalyze();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [fileName, setFileName] = useState("");
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  const requiresTurnstile = Boolean(turnstileSiteKey);
+  const turnstileRef = useRef(null);
+  const turnstileWidgetId = useRef(null);
+
+  const isParseReady = Boolean(text) && !parseError && !isParsing;
+  const showTurnstile =
+    requiresTurnstile &&
+    isParseReady &&
+    (extractionStatus === "idle" || extractionStatus === "error");
+
+  useEffect(() => {
+    if (!requiresTurnstile) return;
+
+    if (!showTurnstile) {
+      if (turnstileWidgetId.current && window.turnstile?.remove) {
+        window.turnstile.remove(turnstileWidgetId.current);
+        turnstileWidgetId.current = null;
+      }
+      return;
+    }
+
+    if (!turnstileRef.current || !window.turnstile?.render) return;
+    if (turnstileWidgetId.current) return;
+
+    turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: turnstileSiteKey,
+      callback: (token) => setTurnstileToken(token),
+      "expired-callback": () => setTurnstileToken(""),
+    });
+
+    return () => {
+      if (turnstileWidgetId.current && window.turnstile?.remove) {
+        window.turnstile.remove(turnstileWidgetId.current);
+        turnstileWidgetId.current = null;
+      }
+    };
+  }, [requiresTurnstile, showTurnstile, turnstileSiteKey]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!text || isSubmitting || isParsing || isExtracting) return;
+    if (
+      !text ||
+      isSubmitting ||
+      isParsing ||
+      isExtracting ||
+      (requiresTurnstile && !turnstileToken)
+    )
+      return;
 
     setIsSubmitting(true);
     clearExtractionError();
 
     try {
-      await runExtraction(text);
+      await runExtraction(text, turnstileToken);
     } finally {
       setIsSubmitting(false);
+      if (requiresTurnstile) setTurnstileToken("");
     }
   }
 
   const handleRetry = async () => {
+    if (requiresTurnstile && !turnstileToken) return;
     setIsSubmitting(true);
     clearExtractionError();
     try {
-      await runExtraction(text);
+      await runExtraction(text, turnstileToken);
     } finally {
       setIsSubmitting(false);
+      if (requiresTurnstile) setTurnstileToken("");
     }
   };
 
   const isDisabled =
-    !text || isSubmitting || isParsing || isExtracting || Boolean(parseError);
+    !text ||
+    isSubmitting ||
+    isParsing ||
+    isExtracting ||
+    Boolean(parseError) ||
+    (requiresTurnstile && !turnstileToken);
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (requiresTurnstile) setTurnstileToken("");
+      setFileName(file.name || "");
       clearExtractionError();
       await parseFile(file);
     }
@@ -95,6 +152,18 @@ export default function Step1Upload() {
         </Alert>
       )}
 
+      {/* Parse Success */}
+      {isParseReady && extractionStatus === "idle" && (
+        <Alert variant="success">
+          <div className="font-medium">Resume parsed successfully</div>
+          <div className="mt-1 text-sm text-gray-700">
+            {fileName
+              ? `File: ${fileName}`
+              : "Your resume is ready to analyze."}
+          </div>
+        </Alert>
+      )}
+
       {/* Extraction Loading State */}
       {isExtracting && (
         <Alert variant="info">
@@ -112,7 +181,11 @@ export default function Step1Upload() {
           <div className="mt-1 text-sm">{extractionError}</div>
           <Button
             onClick={handleRetry}
-            disabled={isSubmitting || isExtracting}
+            disabled={
+              isSubmitting ||
+              isExtracting ||
+              (requiresTurnstile && !turnstileToken)
+            }
             size="sm"
             variant="danger"
             className="mt-3"
@@ -164,6 +237,20 @@ export default function Step1Upload() {
             </Button>
           </div>
         </Alert>
+      )}
+
+      {/* Turnstile Verification */}
+      {showTurnstile && (
+        <div className="flex flex-col items-center gap-2">
+          <div ref={turnstileRef} />
+          {turnstileToken ? (
+            <p className="text-xs text-green-600">Verified ✓</p>
+          ) : (
+            <p className="text-xs text-gray-500">
+              Complete the verification to continue.
+            </p>
+          )}
+        </div>
       )}
 
       {/* Initial Submit Button */}

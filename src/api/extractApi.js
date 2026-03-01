@@ -5,16 +5,21 @@ const flag = import.meta.env.VITE_USE_MOCK_API;
 const USE_MOCK_API =
   typeof flag === "string" ? flag === "true" : import.meta.env.DEV;
 
-export async function extractSkillsFromResume(resumeText) {
+export async function extractSkillsFromResume(resumeText, turnstileToken) {
   if (USE_MOCK_API) {
     return extractSkillsMock(resumeText);
+  }
+
+  const payload = { resumeText };
+  if (typeof turnstileToken === "string" && turnstileToken.trim().length > 0) {
+    payload.turnstileToken = turnstileToken;
   }
 
   try {
     const res = await fetch(apiUrl("/api/extract"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ resumeText }),
+      body: JSON.stringify(payload),
     });
 
     // Check if response is successful

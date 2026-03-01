@@ -25,7 +25,7 @@ export function AnalyzeProvider({ children }) {
   const [inferredSkills, setInferredSkills] = useState([]);
   const [deletedSkills, setDeletedSkills] = useState([]);
 
-  async function runExtraction(resumeText) {
+  async function runExtraction(resumeText, turnstileToken) {
     setIsLoading(true);
     setExtractionStatus("loading");
     setExtractionError(null);
@@ -48,7 +48,7 @@ export function AnalyzeProvider({ children }) {
     setResumeText(resumeText);
 
     try {
-      const result = await extractSkillsFromResume(resumeText);
+      const result = await extractSkillsFromResume(resumeText, turnstileToken);
 
       // Check if the result is an error response from the API client
       if (result.success === false) {
