@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { warmupHealth } from "@/api/healthApi";
 import { useAnalyze } from "@/context/AnalyzeContext";
 import StepIndicator from "@/components/StepIndicator";
 import Step1Upload from "@/features/wizard/Step1Upload";
@@ -9,6 +10,10 @@ export default function WizardPage() {
   const { currentStep, setCurrentStep, extractedSkills, inferredSkills } =
     useAnalyze();
   const totalSkills = extractedSkills.length + inferredSkills.length;
+
+  useEffect(() => {
+    warmupHealth();
+  }, []);
 
   useEffect(() => {
     if (currentStep === 3 && totalSkills < 1) {
