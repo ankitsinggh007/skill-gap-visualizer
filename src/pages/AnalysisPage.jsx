@@ -4,11 +4,11 @@ import { buildAnalysisVM } from "@/features/analysis/viewModel";
 import SummaryHero from "@/features/analysis/sections/SummaryHero";
 import CategoryBreakdown from "@/features/analysis/sections/CategoryBreakdown";
 import SkillCloud from "@/features/analysis/sections/SkillCloud";
-import RadarPlaceholder from "@/features/analysis/sections/RadarPlaceholder";
 import Strengths from "@/features/analysis/sections/Strengths";
 import Weaknesses from "@/features/analysis/sections/Weaknesses";
 import CriticalGaps from "@/features/analysis/sections/CriticalGaps";
 import PersonalizedPlan from "@/features/analysis/sections/PersonalizedPlan";
+import SkillRadar from "@/features/analysis/sections/SkillRadar";
 
 export default function AnalysisPage() {
   const { analysisResult, resetSession } = useAnalyze();
@@ -79,15 +79,16 @@ export default function AnalysisPage() {
           metadata={viewModel.metadata}
         />
 
-        <CategoryBreakdown categoryScores={viewModel.categoryScores} />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <CategoryBreakdown categoryScores={viewModel.categoryScores} />
+          <SkillRadar categoryScores={viewModel.categoryScores} />
+        </div>
 
         <SkillCloud
           matched={viewModel.matched}
           missing={viewModel.missing}
           weakSignals={viewModel.weakSignals}
         />
-
-        <RadarPlaceholder />
 
         <Strengths
           strengths={viewModel.strengths}

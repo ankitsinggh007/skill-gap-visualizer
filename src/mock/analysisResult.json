@@ -1,61 +1,118 @@
 {
   "metadata": {
-    "role": "react",
-    "level": "junior",
+    "role": "frontend engineer",
+    "level": "sde-1",
     "companyType": "unicorn",
     "experienceYears": 2
   },
   "matches": {
     "matchedSkills": [
-      { "skill": "React", "category": "Frontend", "type": "explicit" },
-      { "skill": "JavaScript", "category": "Languages", "type": "explicit" },
-      { "skill": "HTML", "category": "Frontend", "type": "explicit" }
+      { "skill": "React", "category": "frontend", "type": "explicit" },
+      { "skill": "JavaScript", "category": "languages", "type": "explicit" },
+      { "skill": "HTML", "category": "frontend", "type": "explicit" },
+      { "skill": "CSS", "category": "frontend", "type": "explicit" },
+      { "skill": "REST", "category": "backend", "type": "explicit" },
+      { "skill": "PostgreSQL", "category": "databases", "type": "explicit" }
     ],
     "weakSignals": [
-      { "skill": "Hooks", "category": "Frontend", "type": "weak-signal" }
+      { "skill": "TypeScript", "category": "languages", "type": "weak-signal" },
+      { "skill": "Testing", "category": "quality", "type": "weak-signal" }
     ],
     "missingSkills": [
-      { "skill": "Testing", "category": "Quality" },
-      { "skill": "TypeScript", "category": "Languages" }
+      { "skill": "Caching", "category": "backend" },
+      { "skill": "CI/CD", "category": "quality" },
+      { "skill": "Cloud basics", "category": "cloud" }
     ]
   },
   "analysis": {
-    "finalScore": 68,
+    "finalScore": 72,
     "categoryScores": [
       {
         "category": "frontend",
-        "score": 30,
-        "possible": 50,
-        "percentage": 60,
+        "score": 42,
+        "possible": 60,
+        "percentage": 70,
         "skills": [
           {
             "skillName": "React",
             "matchType": "explicit",
-            "score": 12,
+            "score": 16,
             "possible": 20
           },
           {
             "skillName": "HTML",
             "matchType": "explicit",
-            "score": 8,
+            "score": 10,
             "possible": 15
           },
           {
             "skillName": "CSS",
-            "matchType": "weak-signal",
-            "score": 4,
+            "matchType": "explicit",
+            "score": 8,
+            "possible": 10
+          },
+          {
+            "skillName": "Accessibility",
+            "matchType": "missing",
+            "score": 0,
             "possible": 15
           }
         ]
       },
       {
         "category": "languages",
+        "score": 18,
+        "possible": 30,
+        "percentage": 60,
+        "skills": [
+          {
+            "skillName": "JavaScript",
+            "matchType": "explicit",
+            "score": 12,
+            "possible": 15
+          },
+          {
+            "skillName": "TypeScript",
+            "matchType": "weak-signal",
+            "score": 6,
+            "possible": 15
+          }
+        ]
+      },
+      {
+        "category": "backend",
+        "score": 12,
+        "possible": 30,
+        "percentage": 40,
+        "skills": [
+          {
+            "skillName": "REST",
+            "matchType": "explicit",
+            "score": 8,
+            "possible": 10
+          },
+          {
+            "skillName": "Auth",
+            "matchType": "missing",
+            "score": 0,
+            "possible": 10
+          },
+          {
+            "skillName": "Caching",
+            "matchType": "missing",
+            "score": 0,
+            "possible": 10
+          }
+        ]
+      },
+      {
+        "category": "databases",
         "score": 10,
         "possible": 20,
         "percentage": 50,
         "skills": [
           {
-            "skillName": "JavaScript",
+            "skillName": "PostgreSQL",
             "matchType": "explicit",
             "score": 10,
             "possible": 20
@@ -64,14 +121,54 @@
       },
       {
         "category": "quality",
-        "score": 4,
-        "possible": 10,
-        "percentage": 40,
+        "score": 6,
+        "possible": 20,
+        "percentage": 30,
         "skills": [
           {
             "skillName": "Testing",
+            "matchType": "weak-signal",
+            "score": 4,
+            "possible": 10
+          },
+          {
+            "skillName": "CI/CD",
             "matchType": "missing",
             "score": 0,
+            "possible": 10
+          }
+        ]
+      },
+      {
+        "category": "cloud",
+        "score": 4,
+        "possible": 20,
+        "percentage": 20,
+        "skills": [
+          {
+            "skillName": "Cloud basics",
+            "matchType": "missing",
+            "score": 0,
+            "possible": 20
+          }
+        ]
+      },
+      {
+        "category": "system design",
+        "score": 8,
+        "possible": 20,
+        "percentage": 40,
+        "skills": [
+          {
+            "skillName": "Scalability",
+            "matchType": "explicit",
+            "score": 4,
+            "possible": 10
+          },
+          {
+            "skillName": "Trade-offs",
+            "matchType": "weak-signal",
+            "score": 4,
             "possible": 10
           }
         ]
@@ -79,41 +176,49 @@
     ],
     "insights": [
       {
-        "category": "languages",
-        "score": 10,
+        "category": "quality",
+        "score": 6,
         "possible": 20,
-        "percentage": 0.5,
-        "level": "medium"
+        "percentage": 0.3,
+        "level": "low"
       },
       {
-        "category": "quality",
+        "category": "cloud",
         "score": 4,
-        "possible": 10,
-        "percentage": 0.4,
+        "possible": 20,
+        "percentage": 0.2,
         "level": "low"
+      },
+      {
+        "category": "frontend",
+        "score": 42,
+        "possible": 60,
+        "percentage": 0.7,
+        "level": "high"
       }
     ],
     "strengthWeakness": {
       "strengths": [
-        { "category": "Frontend", "skill": "React", "type": "explicit" }
+        { "category": "frontend", "skill": "React", "type": "explicit" }
       ],
       "weaknesses": [
-        { "category": "Quality", "skill": "Testing", "type": "missing" }
+        { "category": "quality", "skill": "CI/CD", "type": "missing" }
       ],
       "criticalGaps": [
-        { "category": "Languages", "skill": "TypeScript", "type": "missing" }
+        { "category": "cloud", "skill": "Cloud basics", "type": "missing" }
       ]
     },
     "atsReadiness": {
-      "score": 18,
-      "total": 30,
-      "percentage": 0.6,
-      "matchedKeywords": ["React", "JavaScript", "HTML"],
-      "missingKeywords": ["TypeScript", "Testing"]
+      "score": 20,
+      "total": 35,
+      "percentage": 0.57,
+      "matchedKeywords": ["React", "JavaScript", "HTML", "REST", "PostgreSQL"],
+      "missingKeywords": ["TypeScript", "Testing", "CI/CD", "Cloud"]
     },
     "recommendations": [
-      "Add a TypeScript project or migration example.",
-      "Mention testing tools like Jest or RTL."
+      "Add TypeScript usage in a real project.",
+      "Show testing with Jest or RTL.",
+      "Mention any cloud deployment experience."
     ]
   }
 }
