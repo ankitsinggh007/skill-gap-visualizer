@@ -25,9 +25,11 @@ Frontend app that lets you upload a resume, extract skills, and benchmark agains
 - React Router
 
 ## Demo
-Screenshots (add before applying):
-- Wizard flow (upload → review)
-- Analysis results (summary + radar)
+Screenshots:
+
+![Wizard - Upload Parsed](docs/screenshots/wizard-step-1-response.png)
+![Wizard - Skills Review](docs/screenshots/wizard-step2-p1.png)
+![Analysis - Category Breakdown + Radar](docs/screenshots/analysis-category-breakdown-skillRadar.png)
 
 ## Deployment
 Live: [skill-gap-visualizer.vercel.app](https://skill-gap-visualizer.vercel.app)
