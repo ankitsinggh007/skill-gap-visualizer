@@ -2,6 +2,17 @@
 
 Frontend app that lets you upload a resume, extract skills, and benchmark against a target role to get strengths, gaps, and a personalized improvement plan.
 
+## What this does
+- Upload a resume (PDF/DOCX/TXT) and extract skills.
+- Review and edit extracted + inferred skills.
+- Benchmark against a target role, level, and company type.
+- Show strengths, weaknesses, priorities, and category coverage.
+
+## Why I built it
+- Candidates often don’t know which skills they’re missing for a target role.
+- Manual gap analysis is slow and inconsistent.
+- I wanted a fast, reliable flow with clear UX states (loading, empty, error).
+
 ## Features
 - Resume upload (PDF/DOCX/TXT) and text extraction
 - Review/edit extracted and inferred skills
@@ -12,6 +23,14 @@ Frontend app that lets you upload a resume, extract skills, and benchmark agains
 - React 19 + Vite
 - Tailwind CSS
 - React Router
+
+## Demo
+Screenshots (add before applying):
+- Wizard flow (upload → review)
+- Analysis results (summary + radar)
+
+## Deployment
+Live: [skill-gap-visualizer.vercel.app](https://skill-gap-visualizer.vercel.app)
 
 ## Setup
 ```bash
@@ -34,6 +53,11 @@ npm run build
 npm run preview
 npm run lint
 ```
+
+## Limitations & Roadmap
+- Backend benchmarks are currently limited to React + Unicorn (Junior/Senior).
+- Expand benchmarks to more roles, levels, and company types.
+- Add richer charts and ATS insights as backend coverage grows.
 
 ## Notes
 - When `VITE_USE_MOCK_API=false`, the app expects backend endpoints at:
