@@ -123,20 +123,18 @@ export default function Step1Upload() {
           Choose Resume File
         </p>
 
-        <input
-          id="file-upload"
-          type="file"
-          accept=".pdf,.docx,.txt"
-          onChange={handleUpload}
-          disabled={isParsing || isExtracting || isSubmitting}
-          className="sr-only"
-        />
-
         <label
-          htmlFor="file-upload"
           aria-label="Upload resume file"
-          className="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition-colors hover:border-blue-400 hover:bg-blue-50"
+          className="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center transition-colors focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:border-blue-400 hover:bg-blue-50"
         >
+          <input
+            id="file-upload"
+            type="file"
+            accept=".pdf,.docx,.txt"
+            onChange={handleUpload}
+            disabled={isParsing || isExtracting || isSubmitting}
+            className="sr-only"
+          />
           <div className="text-gray-600">
             <div className="text-sm font-medium">Click to upload</div>
             <div className="mt-1 text-xs text-gray-500">PDF, DOCX, or TXT</div>
