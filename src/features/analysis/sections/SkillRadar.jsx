@@ -3,7 +3,10 @@ import Chart from "chart.js/auto";
 import SectionCard from "./SectionCard";
 
 export default function SkillRadar({ categoryScores }) {
-  const safeScores = Array.isArray(categoryScores) ? categoryScores : [];
+  const safeScores = useMemo(
+    () => (Array.isArray(categoryScores) ? categoryScores : []),
+    [categoryScores]
+  );
   const { labels, values } = useMemo(() => {
     const labels = safeScores.map((item) => item?.category ?? "Other");
     const values = safeScores.map((item) => {
