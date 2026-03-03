@@ -1,10 +1,7 @@
 import mockData from "@/mock/extractionResult.json";
 
 export async function extractSkillsMock(resumeText) {
-  console.log(
-    "Mock API called with resumeText (length):",
-    resumeText?.length || 0
-  );
+  void resumeText;
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockData);

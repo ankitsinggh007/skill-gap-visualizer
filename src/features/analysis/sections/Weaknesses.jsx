@@ -23,14 +23,22 @@ export default function Weaknesses({ weaknesses, missing }) {
   return (
     <SectionCard title="Weaknesses">
       <ul className="space-y-3">
-        {displayItems.map((item) => (
-          <li key={item} className="flex items-start gap-3">
-            <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-sm font-semibold text-red-700">
-              ⚠
-            </span>
-            <span className="text-gray-700">{item}</span>
-          </li>
-        ))}
+        {displayItems.map((item) => {
+          const label =
+            typeof item === "string" ? item : item?.skill || "Unknown";
+          const key =
+            typeof item === "string"
+              ? item
+              : `${item?.skill || "skill"}-${item?.category || "cat"}`;
+          return (
+            <li key={key} className="flex items-start gap-3">
+              <span className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-sm font-semibold text-red-700">
+                ⚠
+              </span>
+              <span className="text-gray-700">{label}</span>
+            </li>
+          );
+        })}
       </ul>
     </SectionCard>
   );
