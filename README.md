@@ -20,7 +20,7 @@ Frontend app that lets you upload a resume, extract skills, and benchmark agains
 - Analysis view with strengths, weaknesses, and priorities
 
 ## Tech Stack
-- React 19 + Vite
+- React + Vite
 - Tailwind CSS
 - React Router
 
